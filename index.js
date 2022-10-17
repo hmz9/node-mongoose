@@ -10,7 +10,7 @@ connect.then((db) => {
     console.log('Connected correctly to the Database');
 
     var dishObj = new Dishes({
-        name: "Alu ki bhujiya",
+        name: "Dam Alu",
         description: "A famous Indian Dish"
     });
 
@@ -18,13 +18,32 @@ connect.then((db) => {
         .then((dish) => {
             console.log(dish);
 
-            return Dishes.find({}).exec();
+            return Dishes.findByIdAndUpdate(dish._id, {
+                $set: {
+                    description: "Now a famous Pakistani dish as well"
+                }
+            }).exec();
         })
-        .then((dishes) => {
-            console.log(dishes);
+        .then((dish) => {
+            console.log(dish);
+
+            dish.comments.push(
+                {
+                    rating: 4,
+                    comment: 'I love Alu ki bhujiya',
+                    author: 'Nadeem Naniwala'
+                }
+            )
+
+            return dish.save();
+        })
+        .then((dish) => {
+
+            console.log(dish);
 
             return Dishes.deleteMany({}).exec();
         })
+
         .then(() => {
             console.log('Dishes removed');
             mongoose.connection.close();
